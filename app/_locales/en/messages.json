@@ -1,10 +1,10 @@
 {
   "appName": {
-    "message": "prignore",
-    "description": "The name of the application"
+    "message": "GitHub PR Ignore",
+    "description": "for GitHub"
   },
   "appDescription": {
-    "message": "This hides uninterested files(e.g. auto-generated) when PR review.",
+    "message": "This hides uninterested files(e.g. auto-generated) when GitHub PR review.",
     "description": "The description of the application"
   }
 }
