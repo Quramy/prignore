@@ -1,5 +1,7 @@
 # GitHub PR Ignore
 
+![tile](title_440x280.png)
+
 Chrome-extension which hides uninterested files (e.g. auto-generated) when you review GitHub PR.
 
 It has the following features:
