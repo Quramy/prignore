@@ -5,13 +5,9 @@ import parser from 'gitignore-parser';
 
 let decoreate = (opt) => {
   let branchName = $('.gh-header-meta .commit-ref:first>span').text();
-  //console.log('start: ', opt.group, opt.repo, branchName);
   let url =  '/' + [opt.group, opt.repo, 'raw', branchName, '.prignore'].join('/');
   $.ajax({url}).then(data => {
-    //console.log('request ignore file:', url);
-    //console.log(data);
     let ignore = parser.compile(data);
-
     $('.file-header').each((i, elm) => {
       let filepath = $(elm).attr('data-path');
       ignore.denies(filepath) && hide($(elm));
@@ -50,7 +46,7 @@ let show = $elm => {
 let prePathname;
 
 setInterval( () => {
-  if(location.pathname !== prePathname && location.pathname.match(/\/pull\/\d+\/files$/)) {
+  if(location.pathname !== prePathname && location.pathname.match(/\/pull\/\d+\/files/)) {
     if(!$('#files_bucket').hasClass('prignore-marked')) {
       let matched = location.pathname.match(/([^\/]+)\/([^\/]+)\/?/);
       if(!matched) return;

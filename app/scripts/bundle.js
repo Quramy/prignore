@@ -13,13 +13,9 @@ var _gitignoreParser2 = _interopRequireDefault(_gitignoreParser);
 
 var decoreate = function decoreate(opt) {
   var branchName = (0, _jquery2['default'])('.gh-header-meta .commit-ref:first>span').text();
-  //console.log('start: ', opt.group, opt.repo, branchName);
   var url = '/' + [opt.group, opt.repo, 'raw', branchName, '.prignore'].join('/');
   _jquery2['default'].ajax({ url: url }).then(function (data) {
-    //console.log('request ignore file:', url);
-    //console.log(data);
     var ignore = _gitignoreParser2['default'].compile(data);
-
     (0, _jquery2['default'])('.file-header').each(function (i, elm) {
       var filepath = (0, _jquery2['default'])(elm).attr('data-path');
       ignore.denies(filepath) && hide((0, _jquery2['default'])(elm));
@@ -58,7 +54,7 @@ var show = function show($elm) {
 var prePathname = undefined;
 
 setInterval(function () {
-  if (location.pathname !== prePathname && location.pathname.match(/\/pull\/\d+\/files$/)) {
+  if (location.pathname !== prePathname && location.pathname.match(/\/pull\/\d+\/files/)) {
     if (!(0, _jquery2['default'])('#files_bucket').hasClass('prignore-marked')) {
       var matched = location.pathname.match(/([^\/]+)\/([^\/]+)\/?/);
       if (!matched) return;
