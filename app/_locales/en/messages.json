@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "prignore",
+    "description": "The name of the application"
+  },
+  "appDescription": {
+    "message": "This hides uninterested files(e.g. auto-generated) when PR review.",
+    "description": "The description of the application"
+  }
+}
