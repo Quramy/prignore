@@ -9,6 +9,8 @@ It has the following features:
 * You can toggle show/hide file's diff in PR.
 * If you put a config file, it automatically hides matched files.
 
+[Install here](https://chrome.google.com/webstore/detail/github-pr-ignore/gpcifcdmiplinlnenjfnbpmomkdehogc)
+
 
 ## Config file
 
