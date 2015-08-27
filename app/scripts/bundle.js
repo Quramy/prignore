@@ -7,13 +7,57 @@ var _jquery = require('jquery');
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _urlWatcher = require('./urlWatcher');
+
+var _decorate = require('./decorate');
+
+var watcher = new _urlWatcher.UrlWatcher();
+
+watcher.register(/\/pull\/\d+\/files/, function (pathname) {
+  var matched = pathname.match(/([^\/]+)\/([^\/]+)\/?/);
+  if (!matched) return;
+  var group = matched[1];
+  var repo = matched[2];
+
+  var branchName = (0, _jquery2['default'])('.gh-header-meta .commit-ref:first>span').text();
+  if ((0, _jquery2['default'])('#files_bucket').hasClass('prignore-marked--pr')) return;
+  (0, _decorate.decorate)({ group: group, repo: repo, branchName: branchName });
+  (0, _jquery2['default'])('#files_bucket').addClass('prignore-marked--pr');
+});
+
+watcher.register(/\/commit\//, function (pathname) {
+  var matched = pathname.match(/([^\/]+)\/([^\/]+)\/?/);
+  if (!matched) return;
+  var group = matched[1];
+  var repo = matched[2];
+
+  var branchName = (0, _jquery2['default'])('.branches-list .branch:first > a').text();
+  if ((0, _jquery2['default'])('#files').hasClass('prignore-marked--commit')) return;
+  (0, _decorate.decorate)({ group: group, repo: repo, branchName: branchName });
+  (0, _jquery2['default'])('#files').addClass('prignore-marked--commit');
+});
+
+watcher.start();
+},{"./decorate":2,"./urlWatcher":3,"jquery":5}],2:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports.decorate = decorate;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
 var _gitignoreParser = require('gitignore-parser');
 
 var _gitignoreParser2 = _interopRequireDefault(_gitignoreParser);
 
-var decoreate = function decoreate(opt) {
-  var branchName = (0, _jquery2['default'])('.gh-header-meta .commit-ref:first>span').text();
-  var url = '/' + [opt.group, opt.repo, 'raw', branchName, '.prignore'].join('/');
+function decorate(opt) {
+  var url = '/' + [opt.group, opt.repo, 'raw', opt.branchName, '.prignore'].join('/');
   _jquery2['default'].ajax({ url: url }).then(function (data) {
     var ignore = _gitignoreParser2['default'].compile(data);
     (0, _jquery2['default'])('.file-header').each(function (i, elm) {
@@ -39,7 +83,9 @@ var decoreate = function decoreate(opt) {
     });
     $elm.find('.file-info').prepend($button);
   });
-};
+}
+
+;
 
 var hide = function hide($elm) {
   $elm.find('.prignore-button').removeClass('octicon-diff-removed').addClass('octicon-diff-added');
@@ -50,24 +96,56 @@ var show = function show($elm) {
   $elm.find('.prignore-button').removeClass('octicon-diff-added').addClass('octicon-diff-removed');
   $elm.next().show();
 };
+},{"gitignore-parser":4,"jquery":5}],3:[function(require,module,exports){
+'use strict';
 
-var prePathname = undefined;
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
 
-setInterval(function () {
-  if (location.pathname !== prePathname && location.pathname.match(/\/pull\/\d+\/files/)) {
-    if (!(0, _jquery2['default'])('#files_bucket').hasClass('prignore-marked')) {
-      var matched = location.pathname.match(/([^\/]+)\/([^\/]+)\/?/);
-      if (!matched) return;
-      var group = matched[1];
-      var repo = matched[2];
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-      decoreate({ group: group, repo: repo });
-    }
-    (0, _jquery2['default'])('#files_bucket').addClass('prignore-marked');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var UrlWatcher = (function () {
+  function UrlWatcher() {
+    _classCallCheck(this, UrlWatcher);
+
+    this.list = [];
+    this.prePathname = '';
   }
-  prePathname = location.pathname;
-}, 50);
-},{"gitignore-parser":2,"jquery":3}],2:[function(require,module,exports){
+
+  _createClass(UrlWatcher, [{
+    key: 'start',
+    value: function start() {
+      var _this = this;
+
+      setInterval(function () {
+        if (location.pathname === _this.prePathname) return;
+        //let matched = location.pathname.match(/([^\/]+)\/([^\/]+)\/?/);
+        //if(!matched) return;
+        _this.list.forEach(function (obj) {
+          if (location.pathname.match(obj.pattern)) {
+            typeof obj.cb === 'function' && obj.cb(location.pathname);
+          }
+        });
+        _this.prePathname = location.pathname;
+      }, 50);
+      return this;
+    }
+  }, {
+    key: 'register',
+    value: function register(pattern, cb) {
+      this.list.push({ pattern: pattern, cb: cb });
+      return this;
+    }
+  }]);
+
+  return UrlWatcher;
+})();
+
+exports.UrlWatcher = UrlWatcher;
+},{}],4:[function(require,module,exports){
 /**
  * Compile the given `.gitignore` content (not filename!)
  * and return an object with `accepts`, `denies` and `maybe` methods.
@@ -178,7 +256,7 @@ function escapeRegex (pattern) {
   return pattern.replace(/[\-\[\]\/\{\}\(\)\+\?\.\\\^\$\|]/g, "\\$&");
 }
 
-},{}],3:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/

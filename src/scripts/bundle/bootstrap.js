@@ -1,60 +1,30 @@
 'use strict';
 
 import $ from 'jquery';
-import parser from 'gitignore-parser';
+import {UrlWatcher} from './urlWatcher';
+import {decorate} from './decorate';
 
-let decoreate = (opt) => {
+let watcher = new UrlWatcher();
+
+watcher.register(/\/pull\/\d+\/files/, pathname => {
+  let matched = pathname.match(/([^\/]+)\/([^\/]+)\/?/);
+  if(!matched) return;
+  let [group, repo] = [matched[1], matched[2]];
   let branchName = $('.gh-header-meta .commit-ref:first>span').text();
-  let url =  '/' + [opt.group, opt.repo, 'raw', branchName, '.prignore'].join('/');
-  $.ajax({url}).then(data => {
-    let ignore = parser.compile(data);
-    $('.file-header').each((i, elm) => {
-      let filepath = $(elm).attr('data-path');
-      ignore.denies(filepath) && hide($(elm));
-    });
-  });
+  if($('#files_bucket').hasClass('prignore-marked--pr')) return;
+  decorate({group, repo, branchName});
+  $('#files_bucket').addClass('prignore-marked--pr');
+});
 
-  $('.file-header').each((i, elm) => {
-    let $elm = $(elm);
-    let $button = $('<span class="prignore-button octicon">').addClass('octicon-diff-removed');
-    $button.css('color', '#777');
-    $button.css('font-size', '20px');
-    $button.css('display', 'inline-block');
-    $button.css('vertical-align', 'middle');
-    $button.css('cursor', 'pointer');
-    $button.on('click', () => {
-      if($button.hasClass('octicon-diff-added')) {
-        show($elm);
-      }else{
-        hide($elm);
-      }
-    });
-    $elm.find('.file-info').prepend($button);
-  });
-};
+watcher.register(/\/commit\//, pathname => {
+  let matched = pathname.match(/([^\/]+)\/([^\/]+)\/?/);
+  if(!matched) return;
+  let [group, repo] = [matched[1], matched[2]];
+  let branchName = $('.branches-list .branch:first > a').text();
+  if($('#files').hasClass('prignore-marked--commit')) return;
+  decorate({group, repo, branchName});
+  $('#files').addClass('prignore-marked--commit');
+});
 
-let hide = $elm => {
-  $elm.find('.prignore-button').removeClass('octicon-diff-removed').addClass('octicon-diff-added');
-  $elm.next().hide();
-};
-
-let show = $elm => {
-  $elm.find('.prignore-button').removeClass('octicon-diff-added').addClass('octicon-diff-removed');
-  $elm.next().show();
-};
-
-let prePathname;
-
-setInterval( () => {
-  if(location.pathname !== prePathname && location.pathname.match(/\/pull\/\d+\/files/)) {
-    if(!$('#files_bucket').hasClass('prignore-marked')) {
-      let matched = location.pathname.match(/([^\/]+)\/([^\/]+)\/?/);
-      if(!matched) return;
-      let [group, repo] = [matched[1], matched[2]];
-      decoreate({group, repo});
-    }
-    $('#files_bucket').addClass('prignore-marked');
-  }
-  prePathname = location.pathname;
-}, 50);
+watcher.start();
 

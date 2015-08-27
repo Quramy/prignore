@@ -4,7 +4,7 @@
     "description": "for GitHub"
   },
   "appDescription": {
-    "message": "This hides uninterested files(e.g. auto-generated) when GitHub PR review.",
+    "message": "This hides uninterested files(e.g. auto-generated) when GitHub PR or commit review.",
     "description": "The description of the application"
   }
 }
