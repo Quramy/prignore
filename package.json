@@ -1,6 +1,6 @@
 {
   "name": "prignore",
-  "version": "0.0.0",
+  "version": "0.9.2",
   "dependencies": {
     "gitignore-parser": "0.0.2"
   },
@@ -29,6 +29,7 @@
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-plumber": "^1.0.1",
+    "gulp-zip": "^3.1.0",
     "jshint-stylish": "~0.1.5",
     "load-grunt-tasks": "~0.4.0",
     "time-grunt": "~0.3.1",

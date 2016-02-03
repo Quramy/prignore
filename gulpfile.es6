@@ -1,6 +1,7 @@
 import gulp from 'gulp';
 import babel from 'gulp-babel';
 import plumber from 'gulp-plumber';
+import zip from 'gulp-zip';
 import browserify from 'browserify';
 import source from 'vinyl-source-stream';
 import del from 'del';
@@ -33,5 +34,12 @@ gulp.task('watch', () => {
   gulp.watch('src/scripts/**/*.{js,jsx}', ['scripts']);
 });
 
-gulp.task('clean', (done) => del(['app/scripts', '.tmp'], done.bind(this)));
+gulp.task('zip', ['scripts'], () => {
+  return gulp.src('app/**/*', {base: './'})
+    .pipe(zip('app.zip'))
+    .pipe(gulp.dest('dist'))
+  ;
+});
+
+gulp.task('clean', (done) => del(['app/scripts', '.tmp', 'dist'], done.bind(this)));
 
