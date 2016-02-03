@@ -68,12 +68,17 @@ function decorate(opt) {
 
   (0, _jquery2['default'])('.file-header').each(function (i, elm) {
     var $elm = (0, _jquery2['default'])(elm);
-    var $button = (0, _jquery2['default'])('<span class="prignore-button octicon">').addClass('octicon-diff-removed');
-    $button.css('color', '#777');
-    $button.css('font-size', '20px');
+    var $button = (0, _jquery2['default'])('<span class="prignore-button octicon">').addClass('octicon-diff-removed').text('-');
+    $button.css('color', '#888');
     $button.css('display', 'inline-block');
-    $button.css('vertical-align', 'middle');
+    $button.css('width', '24px');
+    $button.css('height', '32px');
+    $button.css('font-size', '20px');
+    $button.css('text-align', 'center');
+    $button.css('vertical-align', 'top');
     $button.css('cursor', 'pointer');
+    $button.css('margin-right', '5px');
+    $button.css('-webkit-user-select', 'none');
     $button.on('click', function () {
       if ($button.hasClass('octicon-diff-added')) {
         show($elm);
@@ -88,12 +93,12 @@ function decorate(opt) {
 ;
 
 var hide = function hide($elm) {
-  $elm.find('.prignore-button').removeClass('octicon-diff-removed').addClass('octicon-diff-added');
+  $elm.find('.prignore-button').removeClass('octicon-diff-removed').addClass('octicon-diff-added').text('+');
   $elm.next().hide();
 };
 
 var show = function show($elm) {
-  $elm.find('.prignore-button').removeClass('octicon-diff-added').addClass('octicon-diff-removed');
+  $elm.find('.prignore-button').removeClass('octicon-diff-added').addClass('octicon-diff-removed').text('-');
   $elm.next().show();
 };
 },{"gitignore-parser":4,"jquery":5}],3:[function(require,module,exports){
