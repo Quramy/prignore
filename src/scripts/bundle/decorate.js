@@ -4,9 +4,11 @@ import $ from 'jquery';
 import parser from 'gitignore-parser';
 
 export function decorate(opt) {
-  let url =  '/' + [opt.group, opt.repo, 'raw', opt.branchName, '.prignore'].join('/');
-  $.ajax({url}).then(data => {
-    let ignore = parser.compile(data);
+  let editorUrl =  '/' + [opt.group, opt.repo, 'edit', opt.branchName, '.prignore'].join('/');
+
+  $.ajax({editorUrl}).then(data => {
+    let content = $(data).find('textarea[data-filename=".prignore"]').text();
+    let ignore = parser.compile(content);
     $('.file-header').each((i, elm) => {
       let filepath = $(elm).attr('data-path');
       ignore.denies(filepath) && hide($(elm));
@@ -46,4 +48,3 @@ let show = $elm => {
   $elm.find('.prignore-button').removeClass('octicon-diff-added').addClass('octicon-diff-removed').text('-');
   $elm.next().show();
 };
-
