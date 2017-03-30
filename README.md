@@ -1,5 +1,7 @@
 # GitHub PR Ignore
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Quramy/prignore.svg)](https://greenkeeper.io/)
+
 ![tile](title_440x280.png)
 
 Chrome-extension which hides uninterested files (e.g. auto-generated) when you review GitHub PR.
